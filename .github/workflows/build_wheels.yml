@@ -17,6 +17,8 @@ jobs:
 
       - name: Build wheels
         uses: pypa/cibuildwheel@v2.17.0
+        env:
+          CIBW_BEFORE_BUILD_MACOS: pip install -y 'clang>=15,<16'
 
       - uses: actions/upload-artifact@v4
         with:
