@@ -1,0 +1,16 @@
+# pyproject.toml
+[build-system]
+requires = ["setuptools"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "fixr"
+version = "0.0.1"
+
+[tool.setuptools.packages.find]
+where = ["src"]
+
+[tool.cibuildwheel]
+
+# Run a script that's inside your project
+before-build = "bash build_xrif_and_generate_bindings.sh"

@@ -1,0 +1,2 @@
+include src/fixr/*.dylib
+include src/fixr/*.so

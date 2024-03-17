@@ -1,0 +1,11 @@
+LICENSE
+MANIFEST.in
+README.md
+pyproject.toml
+src/fixr/__init__.py
+src/fixr/_xrif.py
+src/fixr/libxrif.dylib
+src/fixr.egg-info/PKG-INFO
+src/fixr.egg-info/SOURCES.txt
+src/fixr.egg-info/dependency_links.txt
+src/fixr.egg-info/top_level.txt
