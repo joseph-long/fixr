@@ -22,7 +22,7 @@ cd ../../src/fixr/
 cp ../../xrif/build/src/libxrif.$libExtension ./
 
 # generate bindings
-pip install ctypeslib2
+pip install 'https://github.com/joseph-long/ctypeslib.git@macos-quirks'
 clang2py \
     -k cdefstum \
     -l ../../xrif/build/src/libxrif.$libExtension ../../xrif/src/xrif.h > ./_xrif_rest.py \
