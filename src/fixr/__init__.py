@@ -16,18 +16,11 @@ XRIF2NUMPY_DTYPE = {
     xrif.XRIF_TYPECODE_INT64: np.int64,
 }
 
-class XrifBuffer:
-    def __init__(self, length):
-        self.buffer = ctypes.c_buffer(length)
-        self.length = length
-
 class XrifReader:
-    def __init__(self, fh, prealloc_raw: typing.Optional[XrifBuffer]=None, prealloc_reorder: typing.Optional[XrifBuffer]=None):
+    def __init__(self, fh):
         if 'b' not in fh.mode:
             raise RuntimeError("File handle must be opened in binary mode")
         self.fh = fh
-        self.prealloc_raw = prealloc_raw
-        self.prealloc_reorder = prealloc_reorder
         # allocate and initialize xrif handle
         self._reader = xrif.xrif_t()
         xrif.xrif_new(self._reader)
@@ -122,25 +115,20 @@ class XrifReader:
         if rv != xrif.XRIF_NOERROR:
             raise RuntimeError("XRIF error reading header, check stderr")
 
-        if self.prealloc_reorder is not None:
-            rv = xrif.xrif_set_reordered(self._reader, self.prealloc_reorder.buffer, self.prealloc_reorder.length)
-        else:
-            rv = xrif.xrif_allocate_reordered(self._reader)
-            if rv != xrif.XRIF_NOERROR:
-                raise RuntimeError("XRIF error allocating reordered buffer")
 
+        rv = xrif.xrif_allocate_reordered(self._reader)
+        if rv != xrif.XRIF_NOERROR:
+            raise RuntimeError("XRIF error allocating reordered buffer")
+
+        # xrif can save you a buffer by decompressing into the raw buffer but that
+        # means it needs to be bigger than just `compressed_size`
+        min_buf_size = xrif.xrif_min_raw_size(self._reader)
         # we need to own the raw (and then decompressed) buffer
-        if self.prealloc_raw:
-            xbuf = self.prealloc_raw
-        else:
-            # xrif can save you a buffer by decompressing into the raw buffer but that
-            # means it needs to be bigger than just `compressed_size`
-            xbuf = XrifBuffer(self.min_raw_size)
-
+        buf = ctypes.c_buffer(min_buf_size)
         # we're only filling the first `compressed_size` bytes
-        xbuf.buffer[:self._reader.contents.compressed_size] = self.fh.read(self._reader.contents.compressed_size)
+        buf[:self._reader.contents.compressed_size] = self.fh.read(self._reader.contents.compressed_size)
         # acquaint xrif with our arrangements
-        rv = xrif.xrif_set_raw(self._reader, xbuf.buffer, xbuf.length)
+        rv = xrif.xrif_set_raw(self._reader, buf, min_buf_size)
 
         if rv != xrif.XRIF_NOERROR:
             raise RuntimeError("XRIF error setting raw buffer, check stderr")
@@ -159,7 +147,7 @@ class XrifReader:
         raw_size = self._reader.contents.width * self._reader.contents.height * self._reader.contents.depth * self._reader.contents.frames * self._reader.contents.data_size
 
         # make a NumPy array from a buffer
-        self._decoded = np.frombuffer(xbuf.buffer[:raw_size], dtype).reshape(self.shape)
+        self._decoded = np.frombuffer(buf[:raw_size], dtype).reshape(self.shape)
         self._decoded.setflags(write=False)
 
     @property
