@@ -25,7 +25,7 @@ clang2py \
     || exit 1
 
 # massage codegen output
-sed -i '' "s,'\.\./xrif/build/src/libxrif.$libExtension',bundled_lib_path," ./_xrif_rest.py
+sed -i '' "s,'\.\./\.\./xrif/build/src/libxrif.$libExtension',bundled_lib_path," ./_xrif_rest.py
 echo "import os.path" > ./_xrif.py
 echo "bundled_lib_path = libname = os.path.abspath(os.path.join(os.path.dirname(__file__), \"libxrif.$libExtension\"))" >> ./_xrif.py
 cat ./_xrif_rest.py >> ./_xrif.py
