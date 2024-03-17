@@ -6,6 +6,9 @@ cd build
 if [[ $(uname) == "Darwin" ]]; then
     extraDefines='-DCMAKE_C_FLAGS="-DXRIF_NO_OMP"'
     libExtension=dylib
+    if ! command -v clang; then
+        xcode-select --install
+    fi
 else
     extraDefines=''
     libExtension=so
@@ -19,6 +22,7 @@ cd ../../src/fixr/
 cp ../../xrif/build/src/libxrif.$libExtension ./
 
 # generate bindings
+pip install ctypeslib2
 clang2py \
     -k cdefstum \
     -l ../../xrif/build/src/libxrif.$libExtension ../../xrif/src/xrif.h > ./_xrif_rest.py \
