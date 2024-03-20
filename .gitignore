@@ -3,3 +3,4 @@ __pycache__
 *.dylib
 *.so
 src/fixr/_xrif.py
+*.egg-info
