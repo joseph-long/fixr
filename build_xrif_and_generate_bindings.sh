@@ -21,8 +21,23 @@ cd ../../src/fixr/
 # copy compiled artifact into Python module for distribution
 cp ../../xrif/build/src/libxrif.$libExtension ./
 
+python -m venv ./env
+source ./env/bin/activate
+git clone https://github.com/joseph-long/ctypeslib.git
+cd ctypeslib
+git checkout macos-quirks
+clangVersion=$(clang --version | head -n 1)
+if [[ $clangVersion = *'version 15'* ]]; then
+    pip install 'clang>=15,<16'
+elif [[ $clangVersion = *'version 16'* ]]; then
+    pip install 'clang>=16,<17'
+elif [[ $clangVersion = *'version 17'* ]]; then
+    pip install 'clang>=17,<18'
+fi
+pip install -e ./
+cd ..
+
 # generate bindings
-pip install 'git+https://github.com/joseph-long/ctypeslib.git@macos-quirks'
 clang2py \
     -k cdefstum \
     -l ../../xrif/build/src/libxrif.$libExtension ../../xrif/src/xrif.h > ./_xrif_rest.py \
