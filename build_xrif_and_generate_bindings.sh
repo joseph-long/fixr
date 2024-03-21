@@ -50,8 +50,7 @@ if [[ ! -d ./ctypeslib ]]; then
     git clone --depth=1 https://github.com/joseph-long/ctypeslib.git
 fi
 cd ctypeslib
-git checkout macos-quirks
-which pip
+git checkout -b macos-quirks
 pip install --no-deps -e ./
 
 
