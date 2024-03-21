@@ -2,5 +2,5 @@ __pycache__
 .DS_Store
 *.dylib
 *.so
-src/fixr/_xrif.py
 *.egg-info
+_build
