@@ -11,10 +11,12 @@ if [[ $(uname) == "Darwin" ]]; then
     if ! command -v clang; then
         xcode-select --install
     fi
+    SED_INPLACE="-i ''"
 else
     sudo apt install -y libclang-dev clang python3 python3-pip python3-venv || exit 1
     extraDefines=''
     libExtension=so
+    SED_INPLACE="-i"
 fi
 python -m venv ./env
 source ./env/bin/activate
@@ -61,7 +63,7 @@ clang2py \
     || exit 1
 
 # massage codegen output
-sed -i '' "s,'\.\./\.\./xrif/build/src/libxrif.$libExtension',bundled_lib_path," ./_xrif_rest.py
+sed $SED_INPLACE "s,'\.\./\.\./xrif/build/src/libxrif.$libExtension',bundled_lib_path," ./_xrif_rest.py
 echo "import os.path" > ./_xrif.py
 echo "bundled_lib_path = libname = os.path.abspath(os.path.join(os.path.dirname(__file__), \"libxrif.$libExtension\"))" >> ./_xrif.py
 cat ./_xrif_rest.py >> ./_xrif.py
