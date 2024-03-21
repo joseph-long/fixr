@@ -12,13 +12,16 @@ if [[ $(uname) == "Darwin" ]]; then
         xcode-select --install
     fi
 else
+    sudo apt install -y libclang-dev clang python3 python3-pip python3-venv || exit 1
     extraDefines=''
     libExtension=so
 fi
 python -m venv ./env
 source ./env/bin/activate
 clangVersion=$(clang --version | head -n 1)
-if [[ $clangVersion = *'version 15'* ]]; then
+if [[ $clangVersion = *'version 14'* ]]; then
+    pip install 'clang>=14,<15'
+elif [[ $clangVersion = *'version 15'* ]]; then
     pip install 'clang>=15,<16'
 elif [[ $clangVersion = *'version 16'* ]]; then
     pip install 'clang>=16,<17'
