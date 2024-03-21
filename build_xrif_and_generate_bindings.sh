@@ -1,8 +1,10 @@
 #!/usr/bin/env bash
+set -x
 git submodule update --init --recursive
-cd xrif
-mkdir -p build
-cd build
+
+mkdir -p _build
+cd _build
+
 if [[ $(uname) == "Darwin" ]]; then
     extraDefines='-DCMAKE_C_FLAGS="-DXRIF_NO_OMP"'
     libExtension=dylib
@@ -13,19 +15,8 @@ else
     extraDefines=''
     libExtension=so
 fi
-# build xrif
-cmake .. $extraDefines || exit 1
-make -j $(getconf _NPROCESSORS_ONLN) || exit 1
-cd ../../src/fixr/
-
-# copy compiled artifact into Python module for distribution
-cp ../../xrif/build/src/libxrif.$libExtension ./
-
 python -m venv ./env
 source ./env/bin/activate
-git clone https://github.com/joseph-long/ctypeslib.git
-cd ctypeslib
-git checkout macos-quirks
 clangVersion=$(clang --version | head -n 1)
 if [[ $clangVersion = *'version 15'* ]]; then
     pip install 'clang>=15,<16'
@@ -33,13 +24,34 @@ elif [[ $clangVersion = *'version 16'* ]]; then
     pip install 'clang>=16,<17'
 elif [[ $clangVersion = *'version 17'* ]]; then
     pip install 'clang>=17,<18'
+elif [[ $clangVersion = *'version 18'* ]]; then
+    pip install 'clang>=18,<19'
 fi
-pip install -e ./
-cd ..
 
+cd ../xrif
+mkdir -p build
+cd build
+
+# build xrif
+cmake .. $extraDefines || exit 1
+make -j $(getconf _NPROCESSORS_ONLN) || exit 1
+
+# copy compiled artifact into Python module for distribution
+cp ./src/libxrif.$libExtension ../../src/fixr/
+
+cd ../../_build/
+
+if [[ ! -d ./ctypeslib ]]; then
+    git clone --depth=1 https://github.com/joseph-long/ctypeslib.git
+fi
+cd ctypeslib
+git checkout macos-quirks
+which pip
+pip install --no-deps -e ./
+
+
+cd ../../src/fixr/
 # generate bindings
-# pip install 'git+https://github.com/joseph-long/ctypeslib.git@macos-quirks'
-export CLANG_LIBRARY_PATH=/opt/conda/lib/libclang.so
 clang2py \
     -k cdefstum \
     -l ../../xrif/build/src/libxrif.$libExtension ../../xrif/src/xrif.h > ./_xrif_rest.py \

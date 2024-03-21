@@ -10,7 +10,7 @@ jobs:
       matrix:
         # macos-13 is an intel runner, macos-14 is apple silicon
         # os: [ubuntu-latest, windows-latest, macos-13, macos-14]
-        os: [macos-13]
+        os: [ubuntu-22.04, macos-13, macos-14]
 
     steps:
       - uses: actions/checkout@v4
@@ -19,6 +19,7 @@ jobs:
         uses: pypa/cibuildwheel@v2.17.0
         env:
           CIBW_BEFORE_BUILD_MACOS: pip install 'clang>=15,<16' && bash build_xrif_and_generate_bindings.sh
+          CIBW_BEFORE_BUILD_LINUX: wget https://apt.llvm.org/llvm.sh && chmod +x llvm.sh && ./llvm.sh 15 && pip install 'clang>=15,<16' && bash build_xrif_and_generate_bindings.sh
 
       - uses: actions/upload-artifact@v4
         with:

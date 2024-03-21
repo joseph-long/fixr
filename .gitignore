@@ -4,3 +4,4 @@ __pycache__
 *.so
 *.egg-info
 _build
+minimal_ex_frame.png
