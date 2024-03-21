@@ -13,7 +13,8 @@ if [[ $(uname) == "Darwin" ]]; then
     fi
     SED_INPLACE="-i ''"
 else
-    sudo apt install -y libclang-dev clang python3 python3-pip python3-venv || exit 1
+    # sudo apt install -y libclang-dev clang python3 python3-pip python3-venv || exit 1
+    yum install -y clang-devel python3 python3-pip
     extraDefines=''
     libExtension=so
     SED_INPLACE="-i"
