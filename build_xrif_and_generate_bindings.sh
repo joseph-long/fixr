@@ -48,7 +48,7 @@ cp ./src/libxrif.$libExtension ../../src/fixr/
 cd ../../_build/
 
 if [[ ! -d ./ctypeslib ]]; then
-    git clone -b macos-quirks --depth=1 https://github.com/joseph-long/ctypeslib.git
+    git clone -b further-quirks --depth=1 https://github.com/joseph-long/ctypeslib.git
 fi
 cd ctypeslib
 pip install --no-deps -e ./
