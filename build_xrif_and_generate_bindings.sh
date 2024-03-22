@@ -24,14 +24,19 @@ source ./env/bin/activate
 clangVersion=$(clang --version | head -n 1)
 if [[ $clangVersion = *'version 14'* ]]; then
     pip install 'clang>=14,<15'
+    clangVersion=14
 elif [[ $clangVersion = *'version 15'* ]]; then
     pip install 'clang>=15,<16'
+    clangVersion=15
 elif [[ $clangVersion = *'version 16'* ]]; then
     pip install 'clang>=16,<17'
+    clangVersion=16
 elif [[ $clangVersion = *'version 17'* ]]; then
     pip install 'clang>=17,<18'
+    clangVersion=17
 elif [[ $clangVersion = *'version 18'* ]]; then
     pip install 'clang>=18,<19'
+    clangVersion=18
 fi
 
 cd ../xrif
@@ -58,6 +63,7 @@ cd ../../src/fixr/
 # generate bindings
 clang2py \
     -k cdefstum \
+    --clang-args="-I $(which clang)/lib/clang/${clangVersion}/include" \
     -l ../../xrif/build/src/libxrif.$libExtension ../../xrif/src/xrif.h > ./_xrif_rest.py \
     || exit 1
 
