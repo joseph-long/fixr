@@ -63,7 +63,7 @@ cd ../../src/fixr/
 # generate bindings
 clang2py \
     -k cdefstum \
-    --clang-args="-I $(which clang)/lib/clang/${clangVersion}/include" \
+    --clang-args="-I $(dirname $(which clang))/../lib/clang/${clangVersion}/include" \
     -l ../../xrif/build/src/libxrif.$libExtension ../../xrif/src/xrif.h > ./_xrif_rest.py \
     || exit 1
 
