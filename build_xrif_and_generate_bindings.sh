@@ -4,7 +4,7 @@ which python
 which pip
 git submodule update --init --recursive
 
-mkdir -p _build
+mkdir _build
 cd _build
 
 if [[ $(uname) == "Darwin" ]]; then
