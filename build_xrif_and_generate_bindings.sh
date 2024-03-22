@@ -1,5 +1,7 @@
 #!/usr/bin/env bash
 set -x
+which python
+which pip
 git submodule update --init --recursive
 
 mkdir -p _build
@@ -19,8 +21,8 @@ else
     libExtension=so
     SED_INPLACE="-i"
 fi
-python -m venv ./env
-source ./env/bin/activate
+# python -m venv ./env
+# source ./env/bin/activate
 clangVersion=$(clang --version | head -n 1)
 if [[ $clangVersion = *'version 14'* ]]; then
     pip install 'clang>=14,<15'
