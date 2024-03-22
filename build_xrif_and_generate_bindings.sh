@@ -21,8 +21,10 @@ else
     libExtension=so
     SED_INPLACE="-i"
 fi
-# python -m venv ./env
-# source ./env/bin/activate
+
+python -m venv ./env
+source ./env/bin/activate
+
 clangVersion=$(clang --version | head -n 1)
 if [[ $clangVersion = *'version 14'* ]]; then
     pip install 'clang>=14,<15'
@@ -84,3 +86,5 @@ rm ./_xrif_rest.py
 
 # smoke test to ensure it will import and load the C library
 python -c 'import _xrif' || exit 1
+# cd ../../
+# python -m build || exit 1

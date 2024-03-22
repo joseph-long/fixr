@@ -1,14 +1,17 @@
 from setuptools import setup, Extension
-from wheel.bdist_wheel import bdist_wheel as _bdist_wheel
+from setuptools.dist import Distribution
 
-class bdist_wheel_abi_none(_bdist_wheel):
-    def finalize_options(self):
-        _bdist_wheel.finalize_options(self)
-        self.root_is_pure = False
+class BinaryDistribution(Distribution):
+    """Distribution which always forces a binary package with platform name"""
+    def has_ext_modules(foo):
+        return True
 
-    def get_tag(self):
-        python, abi, plat = _bdist_wheel.get_tag(self)
-        return "py3", "none", plat
+import sys
+
+if sys.platform == 'darwin':
+    lib_extension = 'dylib'
+else:
+    lib_extension = 'so'
 
 setup(
     ext_modules=[
@@ -17,5 +20,6 @@ setup(
             sources=[],  # empty list because we compile this separately
         ),
     ],
-    cmdclass={"bdist_wheel": bdist_wheel_abi_none},
+    package_data={"fixr": [f"libxrif.{lib_extension}"]},
+    distclass=BinaryDistribution,
 )
