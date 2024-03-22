@@ -60,10 +60,16 @@ pip install --no-deps -e ./
 
 
 cd ../../src/fixr/
+
+if [[ -d "$(dirname $(which clang))/../lib64" ]]; then
+    clangLibPrefix="$(dirname $(which clang))/../lib64"
+else
+    clangLibPrefix="$(dirname $(which clang))/../lib"
+fi
 # generate bindings
 clang2py \
     -k cdefstum \
-    --clang-args="-I $(dirname $(which clang))/../lib/clang/${clangVersion}/include" \
+    --clang-args="-I $clangLibPrefix/clang/${clangVersion}/include" \
     -l ../../xrif/build/src/libxrif.$libExtension ../../xrif/src/xrif.h > ./_xrif_rest.py \
     || exit 1
 
