@@ -22,6 +22,7 @@ else
     SED_INPLACE="-i"
 fi
 
+rm -rf ./env
 python -m venv ./env
 source ./env/bin/activate
 
