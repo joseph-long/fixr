@@ -5,3 +5,5 @@ __pycache__
 *.egg-info
 _build
 minimal_ex_frame.png
+dist/
+src/fixr/_xrif.py

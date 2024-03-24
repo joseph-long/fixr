@@ -1,2 +1,3 @@
 include src/fixr/*.dylib
 include src/fixr/*.so
+include src/fixr/_xrif.py
