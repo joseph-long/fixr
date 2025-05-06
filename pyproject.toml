@@ -14,8 +14,8 @@ readme = "README.md"
 where = ["src"]
 
 [tool.cibuildwheel]
-manylinux-x86_64-image = "manylinux2014"
-manylinux-aarch64-image = "manylinux2014"
+manylinux-x86_64-image = "quay.io/pypa/manylinux_2_34_x86_64"
+manylinux-aarch64-image = "quay.io/pypa/manylinux_2_34_aarch64"
 
 # skip pypy, 32bit windows, 32bit linux
 skip = ["pp*", "*-win32", "*-manylinux_i686", "*-musllinux*"]
