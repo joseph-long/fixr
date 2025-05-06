@@ -6,6 +6,11 @@ import io
 
 
 XRIF2NUMPY_DTYPE = {
+    xrif.XRIF_TYPECODE_HALF: np.float16,
+    xrif.XRIF_TYPECODE_FLOAT: np.float32,
+    xrif.XRIF_TYPECODE_DOUBLE: np.float64,
+    xrif.XRIF_TYPECODE_COMPLEX_FLOAT: np.complex64,
+    xrif.XRIF_TYPECODE_COMPLEX_DOUBLE: np.complex128,
     xrif.XRIF_TYPECODE_UINT8: np.uint8,
     xrif.XRIF_TYPECODE_INT8: np.int8,
     xrif.XRIF_TYPECODE_UINT16: np.uint16,
