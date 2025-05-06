@@ -6,6 +6,7 @@ git submodule update --init --recursive
 
 mkdir _build
 cd _build
+SED_INPLACE="-i .new"
 
 if [[ $(uname) == "Darwin" ]]; then
     extraDefines='-DCMAKE_C_FLAGS="-DXRIF_NO_OMP"'
@@ -14,13 +15,12 @@ if [[ $(uname) == "Darwin" ]]; then
     if ! command -v clang; then
         xcode-select --install
     fi
-    SED_INPLACE="-i"
 else
     # sudo apt install -y libclang-dev clang python3 python3-pip python3-venv || exit 1
     yum install -y clang clang-devel clang-libs glibc-devel
     extraDefines=''
     libExtension=so
-    SED_INPLACE="-i"
+
 fi
 
 rm -rf ./env
@@ -75,17 +75,17 @@ CLANG_INCLUDE_FLAGS=$(clang -E -x c - -v < /dev/null 2>&1 | \
 clang2py \
     -k cdefstum \
     --clang-args="$CLANG_INCLUDE_FLAGS" \
-    -l ../../xrif/build/src/libxrif.$libExtension ../../xrif/src/xrif.h > ./_xrif_rest.py \
+    -l ../../xrif/build/src/libxrif.$libExtension ../../xrif/src/xrif.h > ./_xrif_generated.py \
     || exit 1
 
 # massage codegen output
-sed $SED_INPLACE "s,'\.\./\.\./xrif/build/src/libxrif.$libExtension',bundled_lib_path," ./_xrif_rest.py
+TARGET="'../../xrif/build/src/libxrif.dylib'"
+REPLACEMENT="bundled_lib_path"
+sed -i.bak "s|$TARGET|$REPLACEMENT|g" _xrif_generated.py
 echo "import os.path" > ./_xrif.py
 echo "bundled_lib_path = libname = os.path.abspath(os.path.join(os.path.dirname(__file__), \"libxrif.$libExtension\"))" >> ./_xrif.py
-cat ./_xrif_rest.py >> ./_xrif.py
-rm ./_xrif_rest.py
+cat ./_xrif_generated.py >> ./_xrif.py
+rm ./_xrif_generated.py{,.bak}
 
 # smoke test to ensure it will import and load the C library
 python -c 'import _xrif' || exit 1
-# cd ../../
-# python -m build || exit 1

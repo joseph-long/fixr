@@ -3,6 +3,9 @@ import ctypes
 import numpy as np
 from . import _xrif as xrif
 import io
+import logging
+
+log = logging.getLogger(__name__)
 
 
 XRIF2NUMPY_DTYPE = {
@@ -166,5 +169,5 @@ class XrifReader:
 
 def xrif2numpy(fh):
     reader = XrifReader(fh)
-    print(reader.describe())
+    log.debug(reader.describe())
     return reader.copy_data()
