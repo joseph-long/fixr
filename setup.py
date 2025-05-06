@@ -14,12 +14,6 @@ else:
     lib_extension = 'so'
 
 setup(
-    ext_modules=[
-        Extension(
-            name="fixr._xrif",
-            sources=[],  # empty list because we compile this separately
-        ),
-    ],
     package_data={"fixr": [f"libxrif.{lib_extension}"]},
     distclass=BinaryDistribution,
 )

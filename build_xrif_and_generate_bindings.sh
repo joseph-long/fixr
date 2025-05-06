@@ -9,11 +9,12 @@ cd _build
 
 if [[ $(uname) == "Darwin" ]]; then
     extraDefines='-DCMAKE_C_FLAGS="-DXRIF_NO_OMP"'
+    extraDefines="$extraDefines -DCMAKE_OSX_SYSROOT=/Library/Developer/CommandLineTools/SDKs/MacOSX.sdk"
     libExtension=dylib
     if ! command -v clang; then
         xcode-select --install
     fi
-    SED_INPLACE="-i ''"
+    SED_INPLACE="-i"
 else
     # sudo apt install -y libclang-dev clang python3 python3-pip python3-venv || exit 1
     yum install -y clang clang-devel clang-libs glibc-devel
