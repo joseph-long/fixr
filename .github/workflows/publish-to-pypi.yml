@@ -31,8 +31,15 @@ jobs:
         run: |
           python3 -m venv venv
           source venv/bin/activate
-          pip install ./wheelhouse/*.whl
+          pip install pytest
+          pyver=$(python -c "import sys; print(f'{sys.version_info.major}{sys.version_info.minor}')")
+          plat=$(python -c "import distutils.util; print(distutils.util.get_platform().replace('-', '_').replace('.', '_'))")
+          echo "Looking for wheel matching cp${pyver} and ${plat}"
+          WHEEL=$(ls wheelhouse/*cp${pyver}*${plat}*.whl | head -n 1)
+          echo "Installing $WHEEL"
+          pip install "$WHEEL"
           python -c "import fixr; print('Import successful')"
+          pytest ./test_fixr.py
 
       - uses: actions/upload-artifact@v4
         with:
