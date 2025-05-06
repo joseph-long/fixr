@@ -6,6 +6,7 @@ on:
   push:
     branches:
       - main
+      - ci-debug
   release:
     types:
       - published
@@ -33,13 +34,16 @@ jobs:
           source venv/bin/activate
           pip install pytest
           pyver=$(python -c "import sys; print(f'{sys.version_info.major}{sys.version_info.minor}')")
-          plat=$(python -c "import sysconfig; print(sysconfig.get_platform().replace('-', '_').replace('.', '_'))")
-          echo "Looking for wheel matching cp${pyver} and ${plat}"
-          WHEEL=$(ls wheelhouse/*cp${pyver}*${plat}*.whl | head -n 1)
+          echo "Looking for wheel matching cp${pyver}"
+          WHEEL=$(ls wheelhouse/*cp${pyver}*.whl | head -n 1 || true)
+          if [ -z "$WHEEL" ]; then
+            echo "No wheel found matching cp${pyver}"
+            ls wheelhouse/
+            exit 1
+          fi
           echo "Installing $WHEEL"
           pip install "$WHEEL"
-          python -c "import fixr; print('Import successful')"
-          pytest ./test_fixr.py
+          pytest test_fixr.py
 
       - uses: actions/upload-artifact@v4
         with:
