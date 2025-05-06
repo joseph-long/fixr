@@ -14,6 +14,11 @@ XRIF2NUMPY_DTYPE = {
     xrif.XRIF_TYPECODE_INT32: np.int32,
     xrif.XRIF_TYPECODE_UINT64: np.uint64,
     xrif.XRIF_TYPECODE_INT64: np.int64,
+    xrif.XRIF_TYPECODE_HALF: np.float16,
+    xrif.XRIF_TYPECODE_FLOAT: np.float32,
+    xrif.XRIF_TYPECODE_DOUBLE: np.float64,
+    xrif.XRIF_TYPECODE_COMPLEX_FLOAT: np.complex64,
+    xrif.XRIF_TYPECODE_COMPLEX_DOUBLE: np.complex128,
 }
 
 class XrifReader:
