@@ -42,6 +42,10 @@ For an example that uses the C xrif lib more directly, see [minimal_ex.py](https
 
 ## Changelog
 
+### 0.2.1
+
+ - Fix macOS-ism (using `.dylib` instead of `.so` to load library)
+
 ### 0.2.0
 
  - Add missing typecodes ([#1](https://github.com/joseph-long/fixr/issues/1), [#2](https://github.com/joseph-long/fixr/pull/2))

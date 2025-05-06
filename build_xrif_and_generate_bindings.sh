@@ -79,7 +79,7 @@ clang2py \
     || exit 1
 
 # massage codegen output
-TARGET="'../../xrif/build/src/libxrif.dylib'"
+TARGET="'../../xrif/build/src/libxrif.$libExtension'"
 REPLACEMENT="bundled_lib_path"
 sed -i.bak "s|$TARGET|$REPLACEMENT|g" _xrif_generated.py
 echo "import os.path" > ./_xrif.py
