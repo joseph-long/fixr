@@ -43,6 +43,12 @@ elif [[ $clangVersion = *'version 17'* ]]; then
 elif [[ $clangVersion = *'version 18'* ]]; then
     pip install 'clang>=18,<19'
     clangVersion=18
+elif [[ $clangVersion = *'version 19'* ]]; then
+    pip install 'clang>=19,<20'
+    clangVersion=19
+else
+    echo "Unsupported clang version: $clangVersion"
+    exit 1
 fi
 
 cd ../xrif
@@ -56,14 +62,7 @@ make -j $(getconf _NPROCESSORS_ONLN) || exit 1
 # copy compiled artifact into Python module for distribution
 cp ./src/libxrif.$libExtension ../../src/fixr/
 
-cd ../../_build/
-
-if [[ ! -d ./ctypeslib ]]; then
-    git clone -b further-quirks --depth=1 https://github.com/joseph-long/ctypeslib.git
-fi
-cd ctypeslib
-pip install --no-deps -e ./
-
+pip install ctypeslib2 || exit 1
 
 cd ../../src/fixr/
 
