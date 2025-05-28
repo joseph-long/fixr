@@ -36,6 +36,8 @@ Each row contains the frame index, acquisition timestamp (as integer seconds and
 ```
 >>> timings.shape
 (787, 1, 1, 5)
+>>> timings.dtype
+dtype('uint64')
 ```
 
 For an example that uses the C xrif lib more directly, see [minimal_ex.py](https://github.com/joseph-long/fixr/blob/main/minimal_ex.py).
