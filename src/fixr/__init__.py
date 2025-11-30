@@ -2,6 +2,8 @@ import typing
 import ctypes
 import numpy as np
 from . import _xrif as xrif
+# monkey-patch for ARM Linux inconsistency
+xrif.xrif_read_header.argtypes = [xrif.xrif_t, ctypes.POINTER(ctypes.c_uint32), ctypes.c_void_p]
 import io
 import logging
 
