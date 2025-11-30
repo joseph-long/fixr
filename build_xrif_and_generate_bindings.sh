@@ -89,5 +89,9 @@ echo "bundled_lib_path = libname = os.path.abspath(os.path.join(os.path.dirname(
 cat ./_xrif_generated.py >> ./_xrif.py
 rm ./_xrif_generated.py{,.bak}
 
+echo -------------
+cat ./_xrif.py
+echo -------------
+
 # smoke test to ensure it will import and load the C library
 python -c 'import _xrif' || exit 1
