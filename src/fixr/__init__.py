@@ -116,6 +116,8 @@ class XrifReader:
     def _decode_from_fh(self):
         # read one header's worth of bytes
         buf = self.fh.read(xrif.XRIF_HEADER_SIZE)
+        # ctypes got stricter, cast to a pointer to bytes
+        buf = ctypes.cast(buf, ctypes.POINTER(ctypes.c_ubyte))
         header_size_ptr = ctypes.c_uint32()
         # populate header fields in reader
         rv = xrif.xrif_read_header(self._reader, header_size_ptr, buf)
