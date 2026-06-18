@@ -40,9 +40,33 @@ Each row contains the frame index, acquisition timestamp (as integer seconds and
 dtype('uint64')
 ```
 
+Sometimes you don't want to decompress all the data just to read the (uncompressed) timings, so this helper function skips (using `fixr.skip()`) over the first XRIF header + data chunk.
+
+```
+>>> timings = fixr.read_streamwriter_timings(fh)
+>>> timings[0], timings[-1]
+(array([[[  24211485, 1710543470,  994842000, 1710543470,  994896666]]],
+      dtype=uint64), array([[[  24211996, 1710543471,  278731000, 1710543471,  278787539]]],
+      dtype=uint64))
+```
+
+If you need both, this convenience function returns a `(data, timings)` tuple (assuming `fh` is a seekable file containing at least two XRIF headers).
+
+```
+>>> data, timings = fixr.read_streamwriter_archive(fh)
+>>> data.shape, timings.shape
+((512, 1, 120, 120), (512, 1, 1, 5))
+```
+
 For an example that uses the C xrif lib more directly, see [minimal_ex.py](https://github.com/joseph-long/fixr/blob/main/minimal_ex.py).
 
 ## Changelog
+
+### 0.2.2
+
+ - Add `skip()` function to seek to the end of an XRIF archive
+ - Add `read_streamwriter_timings()` and `read_streamwriter_archive()` helpers for XWCL streamwriters which attach timing info as a trailer following compressed data.
+ - Expand docstrings, add tests for new functionality
 
 ### 0.2.1
 

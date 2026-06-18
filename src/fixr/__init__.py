@@ -1,3 +1,4 @@
+import os
 import typing
 import ctypes
 import numpy as np
@@ -106,7 +107,7 @@ class XrifReader:
         if self._reader.contents.compress_method == xrif.XRIF_COMPRESS_LZ4:
             s += f"    LZ4 acceleration: {self.lz4_acceleration}\n"
         s += f"  dimensions:         {self.width} x {self.height} x {self.depth} x {self.frames}\n"
-        
+
         s += f"  raw size:           {self.raw_size} bytes\n"
         s += f"  encoded size:       {self.compressed_size} bytes\n"
         s += f"  ratio:              {self.ratio:.3f}\n"
@@ -171,7 +172,83 @@ class XrifReader:
         arr.setflags(write=True)
         return arr
 
-def xrif2numpy(fh):
+def xrif2numpy(fh, print=log.debug):
+    '''Read an XRIF buffer with header + data and return the data
+
+    Note: makes two copies (first in decompression, second in exposing
+    the data to the user). For maximum memory-efficiency, use ``XrifReader``
+    directly.
+
+    Parameters
+    ----------
+    fh : file-like object in binary mode
+    print : callable (default: log at DEBUG as 'fixr')
+        If you want to skip setting up logging, you can just pass ``print=print``.
+    '''
+    if 'b' not in fh.mode:
+        raise RuntimeError("Files must be opened in binary mode (i.e. `fh = open(filename, 'rb')`)")
+    reader = XrifReader(fh)
+    print(reader.describe())
+    return reader.copy_data()
+
+def skip(fh):
+    '''When a file/buffer contains multiple XRIF-header + data
+    chunks, this will skip the one starting at the file handle
+    current seek position (and not decode it), leaving you
+    free to call ``xrif2numpy`` (or similar) on the next one
+
+    Parameters
+    ----------
+    fh : file-like object in binary mode
+    '''
+    if 'b' not in fh.mode:
+        raise RuntimeError("Files must be opened in binary mode (i.e. `fh = open(filename, 'rb')`)")
+    reader = xrif.xrif_t()
+    xrif.xrif_new(reader)
+    # read one header's worth of bytes
+    buf = fh.read(xrif.XRIF_HEADER_SIZE)
+    buf = ctypes.create_string_buffer(buf)
+
+    header_size_ptr = ctypes.c_uint32()
+    # populate header fields in reader
+    rv = xrif.xrif_read_header(reader, header_size_ptr, buf)
+    assert header_size_ptr.value == xrif.XRIF_HEADER_SIZE
+    if rv != xrif.XRIF_NOERROR:
+        raise RuntimeError("XRIF error reading header, check stderr")
+
+    fh.seek(reader.contents.compressed_size, os.SEEK_CUR)
+
+def read_streamwriter_timings(fh):
+    '''StreamWriter archives from XWCL projects have
+    compressed array data followed by uncompressed
+    nanosecond-precision timestamps.
+
+    This function loads just the timings, skipping the
+    cost of decompressing the data.
+
+    Parameters
+    ----------
+    fh : file-like object in binary mode
+    '''
+    skip(fh)
     reader = XrifReader(fh)
     log.debug(reader.describe())
-    return reader.copy_data()
+    return reader.array
+
+def read_streamwriter_archive(fh):
+    '''StreamWriter archives from XWCL projects have
+    compressed array data followed by uncompressed
+    nanosecond-precision timestamps
+
+    This function loads both in one go, returning
+    a (data, timings) tuple.
+
+    Parameters
+    ----------
+    fh : file-like object in binary mode
+    '''
+    fh.seek(0)
+    data = xrif2numpy(fh)
+    timings = xrif2numpy(fh)
+
+    return data, timings
