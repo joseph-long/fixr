@@ -62,11 +62,15 @@ For an example that uses the C xrif lib more directly, see [minimal_ex.py](https
 
 ## Changelog
 
-### 0.2.2
+### 0.2.3
 
  - Add `skip()` function to seek to the end of an XRIF archive
  - Add `read_streamwriter_timings()` and `read_streamwriter_archive()` helpers for XWCL streamwriters which attach timing info as a trailer following compressed data.
  - Expand docstrings, add tests for new functionality
+
+### 0.2.2 (never pushed to PyPI)
+
+ - Add a monkey-patch to the `_xrif.xrif_read_header` argtypes to make ARM work
 
 ### 0.2.1
 
