@@ -49,6 +49,9 @@ elif [[ $clangVersion = *'version 19'* ]]; then
 elif [[ $clangVersion = *'version 20'* ]]; then
     pip install 'clang>=20,<21'
     clangVersion=20
+elif [[ $clangVersion = *'version 21'* ]]; then
+    pip install 'clang>=21,<22'
+    clangVersion=21
 else
     echo "Unsupported clang version: $clangVersion"
     exit 1
